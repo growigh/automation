@@ -1,0 +1,11 @@
+# Selenium for web automation
+selenium>=4.16.0
+
+# Pandas for data handling
+pandas>=2.1.0
+
+# tqdm for progress bars
+tqdm>=4.66.1
+
+# Optional: webdriver-manager for ChromeDriver management
+webdriver-manager>=4.0.1
