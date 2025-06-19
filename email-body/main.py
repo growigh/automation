@@ -1,4 +1,3 @@
-from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -171,13 +170,13 @@ def process_google_sheet(sheet_id, sheet_name=None):
     # Setup Google Sheets client
     client = setup_google_sheets()
     if not client:
-        return
+        return False
 
     # Load email prompt
     email_prompt = load_email_prompt()
     if not email_prompt:
         print("Could not load email prompt")
-        return
+        return False
 
     try:
         # Open the spreadsheet
@@ -203,6 +202,22 @@ def process_google_sheet(sheet_id, sheet_name=None):
 
             # Print available columns for debugging
             print(f"Available columns: {list(column_map.keys())}")
+            
+            # Check for required columns
+            required_columns = ["Read For Body?", "Name", "Company", "Website", "Body", "Subject"]
+            missing_columns = []
+            
+            for col in required_columns:
+                if col not in column_map:
+                    missing_columns.append(col)
+            
+            if missing_columns:
+                error_msg = f"❌ ERROR: Missing required columns in worksheet '{worksheet.title}': {', '.join(missing_columns)}"
+                print(error_msg)
+                print(f"   Available columns: {list(column_map.keys())}")
+                print(f"   Required columns: {required_columns}")
+                print("   Please add the missing columns to your spreadsheet and try again.")
+                return False  # Return False to indicate failure
 
             # Get all records
             records = worksheet.get_all_records()
@@ -216,15 +231,10 @@ def process_google_sheet(sheet_id, sheet_name=None):
             for idx, row in enumerate(
                 records, start=2
             ):  # Start from row 2 (header is row 1)
-                # Check if "Read For Body?" or "Ready For Body?" column is "Approved"
-                read_for_body = (
-                    row.get("Read For Body?", row.get("Ready For Body?", ""))
-                    .strip()
-                    .lower()
-                )
-                status = row.get("Status", "").strip().lower()
+                # Check if "Read For Body?" column is "Approved"
+                read_for_body = row.get("Read For Body?", "").strip().lower()
 
-                if read_for_body == "approved" and status != "generated":
+                if read_for_body == "approved":
                     name = row.get("Name", "Unknown")
                     print(f"📧 Processing row {idx}: {name}")
 
@@ -254,7 +264,17 @@ def process_google_sheet(sheet_id, sheet_name=None):
                         # Find column indices dynamically
                         body_col = column_map.get("Body")
                         subject_col = column_map.get("Subject")
-                        status_col = column_map.get("Status")
+                        
+                        # Check if required columns for updates exist
+                        if not body_col:
+                            print(f"❌ ERROR: 'Body' column not found in worksheet '{worksheet.title}'")
+                            print("   Cannot update email body. Please add a 'Body' column to your spreadsheet.")
+                            break
+                        
+                        if not subject_col:
+                            print(f"❌ ERROR: 'Subject' column not found in worksheet '{worksheet.title}'")
+                            print("   Cannot update email subject. Please add a 'Subject' column to your spreadsheet.")
+                            break
 
                         # Convert column numbers to letters
                         def col_num_to_letter(col_num):
@@ -270,18 +290,16 @@ def process_google_sheet(sheet_id, sheet_name=None):
                             body_col_letter = col_num_to_letter(body_col)
                             worksheet.update(f"{body_col_letter}{idx}", body)
                             print(f"  ✅ Updated body ({len(body)} characters)")
+                        else:
+                            print(f"  ⚠️  Warning: No body content generated for row {idx}")
 
                         # Update Subject column
                         if subject and subject_col:
                             subject_col_letter = col_num_to_letter(subject_col)
                             worksheet.update(f"{subject_col_letter}{idx}", subject)
                             print(f"  ✅ Updated subject: {subject[:50]}...")
-
-                        # Update Status to "Generated"
-                        if status_col:
-                            status_col_letter = col_num_to_letter(status_col)
-                            worksheet.update(f"{status_col_letter}{idx}", "Generated")
-                            print(f"  ✅ Status updated to 'Generated'")
+                        else:
+                            print(f"  ⚠️  Warning: No subject content generated for row {idx}")
 
                         processed_count += 1
 
@@ -291,10 +309,6 @@ def process_google_sheet(sheet_id, sheet_name=None):
                     # Add delay to avoid API rate limits
                     time.sleep(3)
 
-                elif status == "generated":
-                    print(
-                        f"⏭️  Row {idx} already processed: {row.get('Name', 'Unknown')}"
-                    )
 
                 elif read_for_body != "approved":
                     # Silently skip non-approved rows
@@ -303,12 +317,15 @@ def process_google_sheet(sheet_id, sheet_name=None):
             print(
                 f"\n📊 Completed worksheet '{worksheet.title}': {processed_count} emails generated"
             )
+        
+        return True  # Return True for successful completion
 
     except Exception as e:
         print(f"Error processing spreadsheet: {e}")
         print(
             f"Make sure the Google Sheets ID is correct and you have proper access permissions"
         )
+        return False  # Return False for exceptions
 
 
 def main():
@@ -330,6 +347,7 @@ def main():
 
         if use_env == "y":
             # Process each URL from .env file
+            all_successful = True
             for i, url in enumerate(env_urls, 1):
                 sheet_id = extract_sheet_id_from_url(url)
                 print(f"\n🔄 Processing sheet {i}/{len(env_urls)}: {sheet_id}")
@@ -341,13 +359,16 @@ def main():
                 sheet_name = sheet_name if sheet_name else None
 
                 print(f"🔄 Starting email generation process for sheet {i}...")
-                start_time = time.time()
-                process_google_sheet(sheet_id, sheet_name)
-                end_time = time.time()
+                success = process_google_sheet(sheet_id, sheet_name)
+                
+                if not success:
+                    all_successful = False
+                    print(f"❌ Processing failed for sheet {i}")
 
-                print(f"✅ Sheet {i} completed in {end_time - start_time:.1f} seconds")
-
-            print(f"\n🎉 All sheets processed successfully!")
+            if all_successful:
+                print(f"\n🎉 All sheets processed successfully!")
+            else:
+                print(f"\n❌ Some sheets failed to process. Please check the errors above.")
             return
 
     # Manual input if no .env URLs or user chooses manual input
@@ -377,16 +398,16 @@ def main():
         print(f"📋 Processing all sheets")
 
     # Process the sheet
-    start_time = time.time()
-    process_google_sheet(sheet_id, sheet_name)
-    end_time = time.time()
+    success = process_google_sheet(sheet_id, sheet_name)
 
-    print(f"\n✅ Email generation completed!")
-    print(f"⏱️  Total time: {end_time - start_time:.1f} seconds")
-    print(f"\n💡 Next steps:")
-    print(f"   1. Review generated emails in your Google Sheet")
-    print(f"   2. Set 'SENT?' column to track sent emails")
-    print(f"   3. Use the generated content for your outreach campaign")
+    if success:
+        print(f"\n✅ Email generation completed!")
+        print(f"\n💡 Next steps:")
+        print(f"   1. Review generated emails in your Google Sheet")
+        print(f"   2. Set 'SENT?' column to track sent emails")
+        print(f"   3. Use the generated content for your outreach campaign")
+    else:
+        print(f"\n❌ Email generation failed! Please check the errors above.")
 
 
 if __name__ == "__main__":

@@ -1,7 +1,15 @@
-Act as an outreach copywriter for a web design and digital growth agency, My brand communication is Formal and Little Witty(Little funny, humorous). I'll provide you with details about a specific company, including the recipient's name, their role, company website, observed website issues (performance, design, UX, etc.), and relevant context.
-Based on the provided details, write a concise, respectful outreach email within 100 words and no fluff that:
+Act as an outreach copywriter for a web design and digital growth agency.
+My brand communication is Formal and Little Witty(Little funny, humorous). 
 
+I'll provide you with details about a specific company, including the recipient's name, their role, company website, observed website issues (performance, design, UX, etc.), and relevant context.
 
+Write a concise, respectful outreach email using commanly used english words within 100 words
+
+Based on the provided details:
+
+Include an engaging yet clear subject line using the format: “[theirwebsite.com] has a hidden problem.” Don't sound like an ordinary salesperson.
+
+Email Body:
 Begins with a brief acknowledgment of the company's strengths or services.
 
 Clearly highlights 2–3 specific website issues I've mentioned, such as slow performance, design issues, poor readability, missing interactive elements, etc.
@@ -13,12 +21,7 @@ Offers to discuss solutions or share specific suggestions in a short call (15–
 Includes the calendar scheduling link explicitly (without hyperlink).
 https://calendar.app.google/tZEYH6Uyp5nWnpqVA
 
-Maintain a collaborative, helpful tone without sounding pushy or overly promotional. Include an engaging yet clear subject line using the format: “[theirwebsite.com] has a hidden problem.” Don't sound like an ordinary salesperson.
-
-Don’t add a signature in the end of mail
-
-
-Use the format given below and don't copy the tone and articulation of references below. 
+Use the format given below, Don't copy the tone and articulation of references below and also Don’t add signature in the end of mail.
 
 "Subject: Golden Gateways website has a hidden problem
 
