@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Email Automation Script - Send emails and generate email bodies
+EmailAutomation Class - Main automation functionality
 """
 
 import os
@@ -18,7 +18,6 @@ import getpass
 from datetime import datetime
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from dotenv import load_dotenv
 from google.oauth2.service_account import Credentials
 from urllib.parse import urlparse
 
@@ -30,11 +29,6 @@ try:
     AI_AVAILABLE = True
 except ImportError:
     AI_AVAILABLE = False
-
-# Load environment variables from the script's directory
-script_dir = os.path.dirname(os.path.abspath(__file__))
-env_file = os.path.join(script_dir, '.env')
-load_dotenv(env_file)
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(message)s")
@@ -242,6 +236,63 @@ class EmailAutomation:
         except Exception as e:
             print(f"   ⚠️  Could not save to Sent folder: {e}")
     
+    def convert_text_to_html(self, text):
+        """Convert text with markdown-style formatting to HTML"""
+        if not text:
+            return ""
+        
+        # Convert the text to HTML
+        html_text = text
+        
+        # Convert **bold** to <strong>bold</strong>
+        html_text = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', html_text)
+        
+        # Convert bullet points starting with - or * to HTML list items
+        lines = html_text.split('\n')
+        in_list = False
+        processed_lines = []
+        
+        for line in lines:
+            stripped_line = line.strip()
+            
+            # Check if line starts with bullet point
+            if stripped_line.startswith('- ') or stripped_line.startswith('* '):
+                if not in_list:
+                    processed_lines.append('<ul style="margin: 0px 0; padding-left: 20px; margin-bottom: 0;">')
+                    in_list = True
+                # Remove the bullet point marker and wrap in <li>
+                bullet_content = stripped_line[2:].strip()
+                processed_lines.append(f'<li style="margin: 0; padding: 0; line-height: 1.4;">{bullet_content}</li>')
+            else:
+                # If we were in a list and this line doesn't start with bullet, close the list
+                if in_list:
+                    processed_lines.append('</ul>')
+                    in_list = False
+                
+                # Add the line as is (will be converted to <br> later)
+                if stripped_line:  # Only add non-empty lines
+                    processed_lines.append(line)
+        
+        # Close list if we ended while in a list
+        if in_list:
+            processed_lines.append('</ul>')
+        
+        # Join lines and convert newlines to <br> (except for list items)
+        html_text = '\n'.join(processed_lines)
+        
+        # Convert remaining newlines to <br> but avoid double <br> around lists
+        html_text = re.sub(r'\n(?!</?ul>|<li>)', '<br>\n', html_text)
+        html_text = re.sub(r'<br>\n<ul>', '<br><ul>', html_text)
+        html_text = re.sub(r'</ul>\n<br>', '</ul><br>', html_text)
+        
+        # Clean up extra <br> tags
+        html_text = re.sub(r'(<br>\s*){2,}', '<br>', html_text)
+        
+        # Add proper paragraph styling with tighter spacing
+        html_text = f'<div style="font-family: Helvetica Neue, sans-serif; font-size: 14px; line-height: 1.4; color: #333;">{html_text}</div>'
+        
+        return html_text
+    
     def send_emails(self):
         """Send emails from Google Sheets"""
         if not self.gc:
@@ -331,9 +382,12 @@ Nikhil Nigam<br>
 IIT Kanpur<br>
 <a href="https://Growigh.com">Growigh.com</a>"""
 
-                            # Add signature to body
+                            # Convert body to HTML format
+                            html_body = self.convert_text_to_html(body)
+                            html_body = html_body + html_signature
+                            
+                            # Add signature to plain text body
                             body_with_signature = body + signature
-                            html_body = body.replace("\n", "<br>") + html_signature
 
                             # Send email
                             try:
@@ -732,13 +786,3 @@ IIT Kanpur<br>
                 print("❌ Invalid choice. Please enter 1, 2, or 3.")
             
             input("\n📝 Press Enter to continue...")
-
-
-def main():
-    """Entry point of the application"""
-    automation = EmailAutomation()
-    automation.run()
-
-
-if __name__ == "__main__":
-    main()

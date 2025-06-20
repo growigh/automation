@@ -25,15 +25,10 @@ Warnings:
 Don't sound like an ordinary salesperson.
 Don't add a signature at the end of the mail
 Don't use too vague words
-Don't give me email with curly brackets
-Don't use markdown 
-Don't use "**" in the mail so i can directly copy and paste and send mail
+Don't give me an email with curly brackets so I can copy and paste the email.
 
 Context:
 I'm writing outreach mail to founders, co-founder, ceo and etc higher officials of the company across the world and highlighting faults in their website. These high officials don't have much time, so I write mail to the point, no fluff, straight to the point and then a meeting link.	
-
-
-
 
 
 
@@ -103,5 +98,4 @@ https://calendar.app.google/tZEYH6Uyp5nWnpqVA
 Output style: 
 My brand communication is Formal and a Little Witty(a Little funny, humorous).
 The mail should sound like a real human being empathizing with them, and their website should.
-
-
+While writing issues' bullet points creates the feeling of urgency in the mind of the reader
