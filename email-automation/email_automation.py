@@ -18,7 +18,6 @@ import getpass
 from datetime import datetime
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from email_validator import validate_email
 from dotenv import load_dotenv
 from google.oauth2.service_account import Credentials
 from urllib.parse import urlparse
@@ -102,31 +101,6 @@ class EmailAutomation:
     
     def load_email_prompt(self):
         """Load the email prompt template"""
-        default_prompt = """Act as an outreach copywriter for a web design and digital growth agency.
-My brand communication is Formal and Little Witty(Little funny, humorous). 
-
-I'll provide you with details about a specific company, including the recipient's name, their role, company website, observed website issues (performance, design, UX, etc.), and relevant context.
-
-Write a concise, respectful outreach email using commonly used english words within 100 words
-
-Based on the provided details:
-
-Include an engaging yet clear subject line using the format: "[theirwebsite.com] has a hidden problem." Don't sound like an ordinary salesperson.
-
-Email Body:
-Begins with a brief acknowledgment of the company's strengths or services.
-
-Clearly highlights 2–3 specific website issues I've mentioned, such as slow performance, design issues, poor readability, missing interactive elements, etc.
-
-Suggests clear and direct benefits the company can achieve by addressing these issues, like building credibility, improving user engagement, and accurately reflecting their service quality.
-
-Offers to discuss solutions or share specific suggestions in a short call (15–30 minutes), presenting it as an opportunity rather than a sales push.
-
-Includes the calendar scheduling link explicitly (without hyperlink).
-https://calendar.app.google/tZEYH6Uyp5nWnpqVA
-
-Use a professional and engaging tone. Don't add signature in the end of mail."""
-
         try:
             # Try to load from prompt.txt file
             script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -142,15 +116,17 @@ Use a professional and engaging tone. Don't add signature in the end of mail."""
                         print(f"✅ Loaded email prompt from {prompt_file}")
                         return True
             
-            # Use default prompt if file not found
-            print("⚠️  Using default email prompt template")
-            self.email_prompt = default_prompt
-            return True
+            # Error if prompt.txt not found
+            print("❌ ERROR: prompt.txt file not found!")
+            print("   Searched in the following locations:")
+            for prompt_file in prompt_files:
+                print(f"     - {prompt_file}")
+            print("   Please create a prompt.txt file with your email template.")
+            return False
             
         except Exception as e:
             print(f"❌ Error loading prompt: {e}")
-            self.email_prompt = default_prompt
-            return True
+            return False
     
     def extract_domain_from_url(self, url):
         """Extract domain from URL"""
