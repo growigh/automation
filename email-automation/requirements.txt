@@ -1,7 +1,24 @@
+# Core Google Services
 google-auth==2.23.3
 google-auth-oauthlib==1.1.0
 google-auth-httplib2==0.1.1
 google-api-python-client==2.103.0
 gspread==5.11.3
+
+# Email and validation
 email-validator==2.0.0
+
+# Environment and configuration
 python-dotenv==1.0.0
+
+# AI and Language Models (for email body generation)
+langchain-core
+langchain-google-genai
+langchain-community
+
+# Data processing
+pandas
+openpyxl
+
+# Additional utilities
+requests
