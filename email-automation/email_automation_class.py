@@ -80,7 +80,7 @@ class EmailAutomation:
                 os.environ["GOOGLE_API_KEY"] = api_key
             
             self.llm = ChatGoogleGenerativeAI(
-                model="gemini-1.5-flash-8b-001",
+                model="gemini-2.0-flash",
                 temperature=0,
                 max_tokens=None,
                 timeout=None,
@@ -244,53 +244,9 @@ class EmailAutomation:
         # Convert the text to HTML
         html_text = text
         
-        # Convert **bold** to <strong>bold</strong>
-        html_text = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', html_text)
-        
-        # Convert bullet points starting with - or * to HTML list items
-        lines = html_text.split('\n')
-        in_list = False
-        processed_lines = []
-        
-        for line in lines:
-            stripped_line = line.strip()
-            
-            # Check if line starts with bullet point
-            if stripped_line.startswith('- ') or stripped_line.startswith('* '):
-                if not in_list:
-                    processed_lines.append('<ul style="margin: 0px 0; padding-left: 20px; margin-bottom: 0;">')
-                    in_list = True
-                # Remove the bullet point marker and wrap in <li>
-                bullet_content = stripped_line[2:].strip()
-                processed_lines.append(f'<li style="margin: 0; padding: 0; line-height: 1.4;">{bullet_content}</li>')
-            else:
-                # If we were in a list and this line doesn't start with bullet, close the list
-                if in_list:
-                    processed_lines.append('</ul>')
-                    in_list = False
-                
-                # Add the line as is (will be converted to <br> later)
-                if stripped_line:  # Only add non-empty lines
-                    processed_lines.append(line)
-        
-        # Close list if we ended while in a list
-        if in_list:
-            processed_lines.append('</ul>')
-        
-        # Join lines and convert newlines to <br> (except for list items)
-        html_text = '\n'.join(processed_lines)
-        
-        # Convert remaining newlines to <br> but avoid double <br> around lists
-        html_text = re.sub(r'\n(?!</?ul>|<li>)', '<br>\n', html_text)
-        html_text = re.sub(r'<br>\n<ul>', '<br><ul>', html_text)
-        html_text = re.sub(r'</ul>\n<br>', '</ul><br>', html_text)
-        
-        # Clean up extra <br> tags
-        html_text = re.sub(r'(<br>\s*){2,}', '<br>', html_text)
-        
         # Add proper paragraph styling with tighter spacing
         html_text = f'<div style="font-family: Helvetica Neue, sans-serif; font-size: 14px; line-height: 1.4; color: #333;">{html_text}</div>'
-        
+        print(html_text)
         return html_text
     
     def send_emails(self):

@@ -18,6 +18,9 @@ Offers to discuss solutions or share specific suggestions in a short call (15–
 
 Includes the calendar scheduling link explicitly (without hyperlink).
 https://calendar.app.google/tZEYH6Uyp5nWnpqVA
+
+- All the content should be in the html tags as shown in example (strictly)
+- donot wrap in ```html ```
 }}
 
 
@@ -37,60 +40,71 @@ Examples: {{
 Subject: BIMChannel's website has a hidden problem
 
 Email Body:
-Hi Midhundas,
+<p>Hi Midhundas,</p>
 
-I know you're building some solid innovations at BIMChannel, and it shows.
+<p>I know you're building some solid innovations at <strong>BIMChannel</strong>, and it shows.</p>
 
-But your website's missing a few key elements that may be holding back trust and performance:
-No social links in the footer (hurts credibility)
-The about page is missing (costs connection with visitors)
-Mobile layout performance is weak (affects experience + SEO)
- 
-These are fast wins, and we help companies like yours implement them quickly, without disrupting your brand or operations.
+<p>But your website's missing a few key elements that may be holding back trust and performance:</p>
 
-If you're open to it, I can walk you through exactly what to fix and why it'll matter in just 15–30 minutes.
+<ul>
+  <li><strong>No social links in the footer</strong> (hurts credibility)</li>
+  <li><strong>The about page is missing</strong> (costs connection with visitors)</li>
+  <li><strong>Mobile layout performance is weak</strong> (affects experience + SEO)</li>
+</ul>
 
-https://calendar.app.google/tZEYH6Uyp5nWnpqVA
+<p>These are fast wins, and we help companies like yours implement them quickly, without disrupting your brand or operations.</p>
+
+<p>If you're open to it, I can walk you through exactly what to fix and why it'll matter in just <strong>15–30 minutes</strong>.</p>
+
+<p><a href="https://calendar.app.google/tZEYH6Uyp5nWnpqVA" target="_blank">https://calendar.app.google/tZEYH6Uyp5nWnpqVA</a></p>
 }}
 
 2:{{
 Subject: Property Check's website has a hidden problem
 
 Email Body:
-Hi Liam,
+<p>Hi Liam,</p>
 
-You're clearly building something powerful at Property Check; the tech and value proposition stand out.
+<p>You're clearly building something powerful at <strong>Property Check</strong>; the tech and value proposition stand out.</p>
 
-But your website's cluttered layout and performance issues might be slowing growth and hurting SEO:
-Heavy visuals = longer load times
-Cluttered sections = reduced clarity
-Technical flaws = SEO and trust impact
+<p>But your website's cluttered layout and performance issues might be slowing growth and hurting SEO:</p>
 
-We specialize in quick, effective revamps, without overhauling your brand: just sharper performance, cleaner UX, and more conversions.
+<ul>
+  <li><strong>Heavy visuals</strong> = longer load times</li>
+  <li><strong>Cluttered sections</strong> = reduced clarity</li>
+  <li><strong>Technical flaws</strong> = SEO and trust impact</li>
+</ul>
 
-Open to a quick 15–30 min walkthrough? I'll show you what to fix and why it'll move the needle:
+<p>We specialize in quick, effective revamps, without overhauling your brand: just sharper performance, cleaner UX, and more conversions.</p>
 
-https://calendar.app.google/tZEYH6Uyp5nWnpqVA
+<p>Open to a quick 15–30 min walkthrough? I'll show you what to fix and why it'll move the needle:</p>
+
+<p><a href="https://calendar.app.google/t" target="_blank">https://calendar.app.google/t</a></p>
+
 }}
 
 3: {{
 Subject: Let's Work's website has a hidden issue
 
 Email Body:
-Hi Hamza,
+<p>Hi Hamza,</p>
 
-I know you're busy scaling something powerful at Let's Work, so I'll keep it short.
+<p>I know you're busy scaling something powerful at <strong>Let's Work</strong>, so I'll keep it short.</p>
 
-Your platform is sleek, but a few hidden performance issues are quietly costing conversions:
-Slow image loading (kills first impressions)
-Poor performance score (hurts SEO & user trust)
-Minor speed lags (especially on mobile)
+<p>Your platform is sleek, but a few hidden performance issues are quietly costing conversions:</p>
 
-We fix exactly this fast, clean, and without redesigning everything from scratch.
+<ul>
+  <li><strong>Slow image loading</strong> (kills first impressions)</li>
+  <li><strong>Poor performance score</strong> (hurts SEO & user trust)</li>
+  <li><strong>Minor speed lags</strong> (especially on mobile)</li>
+</ul>
 
-If you're open, I'd love to walk you through a few actionable fixes on a quick 15-minute call:
+<p>We fix exactly this — fast, clean, and without redesigning everything from scratch.</p>
 
-https://calendar.app.google/tZEYH6Uyp5nWnpqVA
+<p>If you're open, I'd love to walk you through a few actionable fixes on a quick 15-minute call:</p>
+
+<p><a href="https://calendar.app.google/tZEYH6Uy
+
 }}
 }}
 
