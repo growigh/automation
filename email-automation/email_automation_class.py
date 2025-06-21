@@ -80,7 +80,7 @@ class EmailAutomation:
                 os.environ["GOOGLE_API_KEY"] = api_key
             
             self.llm = ChatGoogleGenerativeAI(
-                model="gemini-2.0-flash",
+                model="gemini-2.5-flash",
                 temperature=0,
                 max_tokens=None,
                 timeout=None,
@@ -635,17 +635,48 @@ IIT Kanpur<br>
                             print(f"❌ {email_content}")
                             continue
 
+                        # Debug: Show first 200 characters of generated content
+                        print(f"  🔍 Generated content preview: {email_content[:200]}...")
+
                         # Extract subject and body from generated email
+                        # Try multiple patterns for subject extraction
                         subject_match = re.search(
                             r"Subject:\s*(.+?)(?:\n|$)", email_content, re.IGNORECASE
                         )
+                        
+                        # If first pattern doesn't match, try pattern for subject on next line
+                        if not subject_match:
+                            subject_match = re.search(
+                                r"Subject:\s*\n\s*(.+?)(?:\n|$)", email_content, re.IGNORECASE
+                            )
+                        
                         subject = subject_match.group(1).strip() if subject_match else ""
+                        
+                        # Debug: Show what was extracted
+                        if subject:
+                            print(f"  📝 Extracted subject: {subject}")
+                        else:
+                            print(f"  ⚠️  No subject found in generated content")
 
-                        # Remove subject line from body
+                        # Remove subject line from body (handle both patterns)
                         body = re.sub(
-                            r"Subject:\s*.+?(?:\n|$)",
+                            r"Subject:\s*(.+?)(?:\n|$)",
                             "",
                             email_content,
+                            flags=re.IGNORECASE,
+                        )
+                        body = re.sub(
+                            r"Subject:\s*\n\s*(.+?)(?:\n|$)",
+                            "",
+                            body,
+                            flags=re.IGNORECASE,
+                        )
+                        
+                        # Remove "Email Body:" label if present
+                        body = re.sub(
+                            r"Email\s+Body:\s*\n?",
+                            "",
+                            body,
                             flags=re.IGNORECASE,
                         ).strip()
 
