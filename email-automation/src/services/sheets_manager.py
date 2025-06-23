@@ -66,8 +66,33 @@ class SheetsManager:
                 missing_columns.append(col)
         return len(missing_columns) == 0, missing_columns
     
+    def check_cell_permissions(self, worksheet, row: int, col: int) -> bool:
+        """Check if a cell can be edited (not protected)"""
+        try:
+            # Try to get the cell value first - if we can't even read it, there's a bigger issue
+            current_value = worksheet.cell(row, col).value
+            
+            # Try to update with the same value to test permissions
+            worksheet.update_cell(row, col, current_value or "")
+            return True
+        except Exception as e:
+            error_msg = str(e)
+            if "protected" in error_msg.lower() or "permission" in error_msg.lower():
+                print(f"❌ Cell ({row}, {col}) is protected and cannot be edited")
+                print(f"   Error: {error_msg}")
+                return False
+            else:
+                print(f"❌ Unknown error checking cell ({row}, {col}): {error_msg}")
+                return False
+
     def update_cell(self, worksheet, row: int, col: int, value: str) -> bool:
-        """Update a single cell"""
+        """Update a single cell with permission checking"""
+        # First check if we have permission to edit this cell
+        if not self.check_cell_permissions(worksheet, row, col):
+            print(f"❌ Cannot update cell ({row}, {col}) - insufficient permissions")
+            print("   Please contact the spreadsheet owner to remove protection or grant edit access")
+            return False
+        
         try:
             worksheet.update_cell(row, col, value)
             return True
@@ -98,6 +123,14 @@ class SheetsManager:
         try:
             sent_col_index = self.find_sent_column(headers)
             if sent_col_index:
+                # Check permissions before attempting update
+                if not self.check_cell_permissions(worksheet, row_index + 1, sent_col_index):
+                    print("❌ CRITICAL: Cannot update 'sent' status due to sheet protection")
+                    print("   This will prevent proper tracking of sent emails")
+                    print("   Please remove sheet protection or grant edit permissions")
+                    print("   Stopping execution to prevent duplicate emails")
+                    return False
+                
                 return self.update_cell(worksheet, row_index + 1, sent_col_index, "True")
             else:
                 print("   ⚠️  No 'sent' column found to update")
@@ -129,3 +162,26 @@ class SheetsManager:
                 total_errors += 1
         
         return total_processed, total_errors
+    
+    def check_sheet_permissions(self, worksheet) -> bool:
+        """Check if we have edit permissions on the worksheet"""
+        try:
+            headers = worksheet.row_values(1)
+            sent_col_index = self.find_sent_column(headers)
+            
+            if not sent_col_index:
+                print("   ⚠️  No 'sent' column found - cannot track email status")
+                return False
+            
+            # Test permissions on the first data row (row 2) if it exists
+            if worksheet.row_count >= 2:
+                print(f"   🔍 Checking permissions for 'sent' column (column {sent_col_index})...")
+                if not self.check_cell_permissions(worksheet, 2, sent_col_index):
+                    return False
+                    
+            print("   ✅ Sheet permissions verified")
+            return True
+            
+        except Exception as e:
+            print(f"❌ Error checking sheet permissions: {e}")
+            return False

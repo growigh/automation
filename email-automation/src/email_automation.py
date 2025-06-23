@@ -68,6 +68,16 @@ class EmailAutomation:
                 
                 # Process each worksheet
                 for worksheet in spreadsheet.worksheets():
+                    print(f"   📋 Checking worksheet: {worksheet.title}")
+                    
+                    # Check permissions before processing
+                    if not self.sheets_manager.check_sheet_permissions(worksheet):
+                        print(f"❌ SKIPPING worksheet '{worksheet.title}' due to permission issues")
+                        print("   Please contact the spreadsheet owner to:")
+                        print("   1. Remove sheet protection from the 'sent' column")
+                        print("   2. Grant edit permissions to your service account")
+                        continue
+                    
                     processed, sent, approved, not_approved = self._process_worksheet_for_sending(
                         worksheet, email_sender
                     )
@@ -121,7 +131,14 @@ class EmailAutomation:
                 if success:
                     emails_sent += 1
                     # Mark as sent in the worksheet
-                    self.sheets_manager.mark_as_sent(worksheet, i, headers)
+                    mark_success = self.sheets_manager.mark_as_sent(worksheet, i, headers)
+                    
+                    if not mark_success:
+                        print("❌ STOPPING EXECUTION: Cannot mark emails as sent due to permission issues")
+                        print("   This prevents proper tracking and could lead to duplicate emails")
+                        print("   Please fix sheet permissions before continuing")
+                        return total_rows, emails_sent, approved_rows, not_approved_rows
+                    
                     # Add rate limiting
                     email_sender.add_rate_limiting()
                     

@@ -2,7 +2,7 @@ You are an expert outreach copywriter for a web design and digital growth agency
 
 Goal: Write an engaging yet clear, concise, respectful outreach email using commonly used English words within 100 words. I
 
-Return Format:
+Return Format(Strictly):
 - Subject: [theirwebsite] has a hidden problem.
 - Begins with a brief acknowledgment of the company's strengths or services.
 - Write 3 bullet points highlighting the website, I've mentioned Issues: {{issues}}
