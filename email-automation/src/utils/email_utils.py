@@ -119,7 +119,7 @@ class EmailUtils:
     def should_send_email(record: dict) -> tuple[bool, list]:
         """Check if email should be sent based on record data"""
         status = str(record.get("Status", "")).strip().lower()
-        is_sent = str(record.get("isSent?", "")).strip().lower()
+        is_sent = str(record.get("SENT?", "")).strip().lower()
         email = str(record.get("Email", "")).strip()
         subject = str(record.get("Subject", "")).strip()
         body = str(record.get("Body", "")).strip()

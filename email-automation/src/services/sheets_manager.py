@@ -116,6 +116,12 @@ class SheetsManager:
         for j, header in enumerate(headers, 1):
             if header.strip().lower() in sent_column_names:
                 return j
+                
+        # Check for "SENT?" column specifically (case-sensitive)
+        for j, header in enumerate(headers, 1):
+            if header == "SENT?":
+                return j
+                
         return None
     
     def mark_as_sent(self, worksheet, row_index: int, headers: List[str]) -> bool:

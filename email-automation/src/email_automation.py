@@ -276,6 +276,13 @@ class EmailAutomation:
         # Process each row
         processed_count = 0
         for idx, row in enumerate(records, start=2):  # Start from row 2 (header is row 1)
+            # Check if email has already been sent
+            is_sent = str(row.get("SENT?", "")).strip().lower()
+            if is_sent in Config.SENT_VALUES:
+                name = row.get("Name", "Unknown")
+                print(f"⏭️  Skipping row {idx}: {name} - Email already sent")
+                continue
+                
             # Check if "Read For Body?" column is "Approved"
             read_for_body = row.get("Read For Body?", "").strip().lower()
             

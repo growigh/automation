@@ -33,12 +33,12 @@ class Config:
     SENT_FOLDER_NAMES = ['Sent', 'Sent Items', 'INBOX.Sent']
     
     # Required columns for different operations
-    REQUIRED_SEND_COLUMNS = ["Status", "Email", "Subject", "Body"]
-    REQUIRED_GENERATION_COLUMNS = ["Read For Body?", "Name", "Company", "Website", "Body", "Subject"]
+    REQUIRED_SEND_COLUMNS = ["Status", "Email", "Subject", "Body", "SENT?"]
+    REQUIRED_GENERATION_COLUMNS = ["Read For Body?", "Name", "Company", "Website", "Body", "Subject", "SENT?"]
     
     # Status values
     APPROVED_STATUS = "approved"
-    SENT_VALUES = ["true", "yes", "1"]
+    SENT_VALUES = ["true", "yes", "1", "TRUE"]
     
     # AI Configuration
     AI_MODEL = "gemini-2.5-flash"
