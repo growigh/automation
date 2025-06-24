@@ -115,3 +115,51 @@ class UserInterface:
     def display_worksheet_completion(worksheet_title: str, processed_count: int):
         """Display worksheet completion information"""
         print(f"\n📊 Completed worksheet '{worksheet_title}': {processed_count} emails generated")
+
+    @staticmethod
+    def show_generation_options():
+        """Display email generation options"""
+        print("\n" + "="*50)
+        print("✍️ Email Generation Options")
+        print("="*50)
+        print("1. 📄 Generate for entire sheet")
+        print("2. 📝 Generate for specific row")
+        print("3. 🔙 Back to main menu")
+        print("="*50)
+    
+    @staticmethod
+    def get_generation_choice() -> str:
+        """Get user choice for generation type"""
+        return input("👉 Enter your choice (1-3): ").strip()
+    
+    @staticmethod
+    def get_row_number(max_rows: int) -> int:
+        """Get specific row number from user"""
+        while True:
+            try:
+                row_input = input(f"📝 Enter row number (2-{max_rows + 1}, header is row 1): ").strip()
+                if not row_input:
+                    return 0
+                
+                row_num = int(row_input)
+                if 2 <= row_num <= max_rows + 1:
+                    return row_num
+                else:
+                    print(f"❌ Please enter a valid row number between 2 and {max_rows + 1}")
+            except ValueError:
+                print("❌ Please enter a valid number")
+    
+    @staticmethod
+    def display_row_info(row_num: int, row_data: dict):
+        """Display information about the selected row"""
+        print(f"\n📋 Row {row_num} Information:")
+        print(f"   Name: {row_data.get('Name', 'N/A')}")
+        print(f"   Company: {row_data.get('Company', 'N/A')}")
+        print(f"   Email: {row_data.get('Email', 'N/A')}")
+        print(f"   Status: {row_data.get('Read For Body?', 'N/A')}")
+        
+    @staticmethod
+    def confirm_row_generation(row_num: int, name: str) -> bool:
+        """Confirm generation for specific row"""
+        response = input(f"🤔 Generate email for row {row_num} ({name})? (y/n): ").strip().lower()
+        return response in ['y', 'yes']
