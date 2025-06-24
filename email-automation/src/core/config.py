@@ -4,7 +4,7 @@ Configuration management for email automation
 """
 
 import os
-from typing import List, Optional
+from typing import List
 
 
 class Config:
@@ -32,8 +32,7 @@ class Config:
     # Sent folder names to try
     SENT_FOLDER_NAMES = ['Sent', 'Sent Items', 'INBOX.Sent']
     
-    # Required columns for different operations
-    REQUIRED_SEND_COLUMNS = ["Status", "Email", "Subject", "Body", "SENT?"]
+    # Required columns
     REQUIRED_GENERATION_COLUMNS = ["Read For Body?", "Name", "Company", "Website", "Body", "Subject", "SENT?"]
     
     # Status values
@@ -48,6 +47,9 @@ class Config:
     # Rate limiting
     EMAIL_SEND_DELAY = 2  # seconds
     API_CALL_DELAY = 3    # seconds
+    
+    # SMTP Configuration
+    SMTP_TIMEOUT = 30     # seconds
     
     @staticmethod
     def get_service_account_file() -> str:

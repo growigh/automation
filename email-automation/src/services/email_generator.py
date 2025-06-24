@@ -6,7 +6,7 @@ AI-powered email generation functionality
 import os
 import getpass
 import time
-from typing import Dict, Optional, Tuple
+from typing import Dict
 
 from src.core.config import Config
 from src.utils.email_utils import EmailUtils

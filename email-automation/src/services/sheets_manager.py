@@ -7,8 +7,6 @@ import gspread
 from google.oauth2.service_account import Credentials
 from typing import List, Dict, Optional, Tuple
 from src.core.config import Config
-from src.utils.email_utils import EmailUtils
-
 
 class SheetsManager:
     """Manages Google Sheets operations"""
@@ -100,15 +98,6 @@ class SheetsManager:
             print(f"❌ Error updating cell ({row}, {col}): {e}")
             return False
     
-    def update_cell_by_column_letter(self, worksheet, row: int, col_letter: str, value: str) -> bool:
-        """Update cell using column letter (e.g., A1, B2)"""
-        try:
-            worksheet.update(f"{col_letter}{row}", value)
-            return True
-        except Exception as e:
-            print(f"❌ Error updating cell {col_letter}{row}: {e}")
-            return False
-    
     def find_sent_column(self, headers: List[str]) -> Optional[int]:
         """Find the 'sent' column index"""
         sent_column_names = ["sent?", "issent?", "is sent?", "issent", "sent"]
@@ -144,30 +133,6 @@ class SheetsManager:
         except Exception as e:
             print(f"❌ Error marking as sent: {e}")
             return False
-    
-    def process_sheets_from_urls(self, urls: List[str], processor_func) -> Tuple[int, int]:
-        """Process multiple sheets from URLs"""
-        total_processed = 0
-        total_errors = 0
-        
-        for sheet_url in urls:
-            if not sheet_url.strip():
-                continue
-            
-            try:
-                spreadsheet = self.get_spreadsheet_by_url(sheet_url)
-                print(f"📊 Processing: {spreadsheet.title}")
-                
-                for worksheet in spreadsheet.worksheets():
-                    processed, errors = processor_func(worksheet)
-                    total_processed += processed
-                    total_errors += errors
-                    
-            except Exception as e:
-                print(f"❌ Error processing sheet {sheet_url}: {e}")
-                total_errors += 1
-        
-        return total_processed, total_errors
     
     def check_sheet_permissions(self, worksheet) -> bool:
         """Check if we have edit permissions on the worksheet"""

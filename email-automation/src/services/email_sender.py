@@ -8,7 +8,7 @@ import imaplib
 import time
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, Optional
 from datetime import datetime
 
 from src.core.config import Config
@@ -70,10 +70,10 @@ class EmailSender:
             print(f"   🔄 Trying {server_host}:{port} ({connection_type})...")
             
             if connection_type == "SSL":
-                server = smtplib.SMTP_SSL(server_host, port, timeout=30)
+                server = smtplib.SMTP_SSL(server_host, port, timeout=Config.SMTP_TIMEOUT)
                 print(f"   🔒 Using SSL connection to {server_host}:{port}")
             else:
-                server = smtplib.SMTP(server_host, port, timeout=30)
+                server = smtplib.SMTP(server_host, port, timeout=Config.SMTP_TIMEOUT)
                 print(f"   🔐 Starting TLS connection to {server_host}:{port}...")
                 server.starttls()
             

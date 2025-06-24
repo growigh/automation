@@ -107,15 +107,6 @@ class EmailUtils:
         return result
     
     @staticmethod
-    def validate_required_fields(record: dict, required_fields: list) -> tuple[bool, list]:
-        """Validate if record has all required fields"""
-        missing = []
-        for field in required_fields:
-            if not str(record.get(field, "")).strip():
-                missing.append(field)
-        return len(missing) == 0, missing
-    
-    @staticmethod
     def should_send_email(record: dict) -> tuple[bool, list]:
         """Check if email should be sent based on record data"""
         status = str(record.get("Status", "")).strip().lower()

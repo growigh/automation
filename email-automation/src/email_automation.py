@@ -3,11 +3,8 @@
 EmailAutomation Class - Main automation functionality
 """
 
-import os
 import warnings
-import time
-import logging
-from typing import List, Dict, Tuple
+from typing import List, Tuple
 
 # Suppress urllib3 OpenSSL warning on macOS
 warnings.filterwarnings('ignore', message='urllib3 v2 only supports OpenSSL 1.1.1+')
@@ -19,10 +16,6 @@ from src.services.sheets_manager import SheetsManager
 from src.services.email_sender import EmailSender
 from src.services.email_generator import EmailGenerator
 from src.ui.user_interface import UserInterface
-
-# Setup logging
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(message)s")
-logger = logging.getLogger(__name__)
 
 
 class EmailAutomation:
