@@ -83,7 +83,7 @@ Nikhil Nigam
 IIT Kanpur
 Growigh.com"""
         
-        html_signature = """<br><br>
+        html_signature = """<br>
 Best Regards,<br>
 Nikhil Nigam<br>
 IIT Kanpur<br>

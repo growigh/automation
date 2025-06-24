@@ -5,7 +5,6 @@ Utility functions for email automation
 
 import re
 from urllib.parse import urlparse
-from typing import Optional
 
 
 class EmailUtils:

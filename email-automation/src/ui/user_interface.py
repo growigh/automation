@@ -4,7 +4,7 @@ User interface for email automation
 """
 
 from typing import List, Optional
-
+from src.utils.email_utils import EmailUtils
 
 class UserInterface:
     """Handles user interaction and menu display"""
@@ -46,7 +46,6 @@ class UserInterface:
         """Display information about available sheets"""
         print(f"📋 Found {len(urls)} Google Sheets URL(s) in .env file:")
         for i, url in enumerate(urls, 1):
-            from src.utils.email_utils import EmailUtils
             sheet_id = EmailUtils.extract_sheet_id_from_url(url)
             print(f"   {i}. {url} (ID: {sheet_id})")
     

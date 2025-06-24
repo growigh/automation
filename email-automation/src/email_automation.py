@@ -41,50 +41,128 @@ class EmailAutomation:
         
         email_sender.print_config_info()
         
-        # Get sheets URLs from config
-        sheets_urls = Config.get_sheets_urls()
+        # Get Google Sheets URLs from environment
+        env_urls = Config.get_sheets_urls()
         
-        # Initialize counters
-        emails_sent = 0
-        total_rows = 0
-        approved_rows = 0
-        not_approved_rows = 0
-        
-        # Process each sheet
-        for sheet_url in sheets_urls:
-            if not sheet_url.strip():
-                continue
+        if env_urls:
+            self.ui.display_sheets_info(env_urls)
+            use_env = self.ui.get_yes_no_input("\n🤔 Use URLs from .env file? (y/n): ")
             
-            try:
-                spreadsheet = self.sheets_manager.get_spreadsheet_by_url(sheet_url)
-                print(f"📊 Processing: {spreadsheet.title}")
-                
-                # Process each worksheet
-                for worksheet in spreadsheet.worksheets():
-                    print(f"   📋 Checking worksheet: {worksheet.title}")
-                    
-                    # Check permissions before processing
-                    if not self.sheets_manager.check_sheet_permissions(worksheet):
-                        print(f"❌ SKIPPING worksheet '{worksheet.title}' due to permission issues")
-                        print("   Please contact the spreadsheet owner to:")
-                        print("   1. Remove sheet protection from the 'sent' column")
-                        print("   2. Grant edit permissions to your service account")
-                        continue
-                    
-                    processed, sent, approved, not_approved = self._process_worksheet_for_sending(
-                        worksheet, email_sender
-                    )
-                    
-                    total_rows += processed
-                    emails_sent += sent
-                    approved_rows += approved
-                    not_approved_rows += not_approved
-                    
-            except Exception as e:
-                print(f"❌ Error processing sheet {sheet_url}: {e}")
+            if use_env:
+                self._process_multiple_sheets_for_sending(env_urls, email_sender)
+                return
         
-        # Display summary
-        self.ui.display_summary(total_rows, approved_rows, not_approved_rows, emails_sent)
+        # Manual input if no .env URLs or user chooses manual input
+        print("📋 Manual Google Sheets ID Entry")
+        sheet_input = self.ui.get_user_input("📋 Enter Google Sheets ID or URL: ")
+        
+        if not sheet_input:
+            print("❌ Please provide a valid Google Sheets ID or URL")
+            return
+        
+        # Extract sheet ID if URL is provided
+        sheet_id = EmailUtils.extract_sheet_id_from_url(sheet_input)
+        
+        # Optional: Get specific sheet name
+        sheet_name = self.ui.get_user_input(
+            "📝 Enter specific sheet name (or press Enter for all sheets): "
+        )
+        sheet_name = sheet_name if sheet_name else None
+        
+        print(f"\n🔄 Starting email sending process...")
+        print(f"📊 Sheet ID: {sheet_id}")
+        if sheet_name:
+            print(f"📋 Target sheet: {sheet_name}")
+        else:
+            print("📋 Processing all sheets")
+        
+        # Process the sheet
+        self._process_single_sheet_for_sending(sheet_id, sheet_name, email_sender)
+    
+    def _process_multiple_sheets_for_sending(self, urls: List[str], email_sender: EmailSender) -> None:
+        """Process multiple sheets for email sending"""
+        # Initialize counters
+        total_emails_sent = 0
+        total_total_rows = 0
+        total_approved_rows = 0
+        total_not_approved_rows = 0
+        
+        for i, url in enumerate(urls, 1):
+            sheet_id = EmailUtils.extract_sheet_id_from_url(url)
+            self.ui.display_processing_sheet_info(i, len(urls), sheet_id)
+            
+            # Optional: Get specific sheet name
+            sheet_name = self.ui.get_user_input(
+                f"📝 Enter specific sheet name for sheet {i} (or press Enter for all sheets): "
+            )
+            sheet_name = sheet_name if sheet_name else None
+            
+            print(f"🔄 Starting email sending process for sheet {i}...")
+            success, emails_sent, total_rows, approved_rows, not_approved_rows = self._process_single_sheet_for_sending(
+                sheet_id, sheet_name, email_sender
+            )
+            
+            total_emails_sent += emails_sent
+            total_total_rows += total_rows
+            total_approved_rows += approved_rows
+            total_not_approved_rows += not_approved_rows
+            
+            if not success:
+                print(f"❌ Processing failed for sheet {i}")
+                break
+        
+        # Display final summary
+        self.ui.display_summary(total_total_rows, total_approved_rows, total_not_approved_rows, total_emails_sent)
+    
+    def _process_single_sheet_for_sending(self, sheet_id: str, sheet_name: str = None, email_sender: EmailSender = None) -> tuple:
+        """Process a single Google Sheet for email sending"""
+        try:
+            # Open the spreadsheet
+            spreadsheet = self.sheets_manager.get_spreadsheet_by_id(sheet_id)
+            print(f"📊 Processing: {spreadsheet.title}")
+            
+            # Get worksheets to process
+            worksheets = (
+                [spreadsheet.worksheet(sheet_name)]
+                if sheet_name
+                else spreadsheet.worksheets()
+            )
+            
+            # Initialize counters
+            emails_sent = 0
+            total_rows = 0
+            approved_rows = 0
+            not_approved_rows = 0
+            
+            # Process each worksheet
+            for worksheet in worksheets:
+                print(f"   📋 Checking worksheet: {worksheet.title}")
+                
+                # Check permissions before processing
+                if not self.sheets_manager.check_sheet_permissions(worksheet):
+                    print(f"❌ SKIPPING worksheet '{worksheet.title}' due to permission issues")
+                    print("   Please contact the spreadsheet owner to:")
+                    print("   1. Remove sheet protection from the 'sent' column")
+                    print("   2. Grant edit permissions to your service account")
+                    continue
+                
+                processed, sent, approved, not_approved = self._process_worksheet_for_sending(
+                    worksheet, email_sender
+                )
+                
+                total_rows += processed
+                emails_sent += sent
+                approved_rows += approved
+                not_approved_rows += not_approved
+            
+            # Display summary for this sheet
+            self.ui.display_summary(total_rows, approved_rows, not_approved_rows, emails_sent)
+            return True, emails_sent, total_rows, approved_rows, not_approved_rows
+            
+        except Exception as e:
+            print(f"❌ Error processing spreadsheet: {e}")
+            print(f"Make sure the Google Sheets ID is correct and you have proper access permissions")
+            return False, 0, 0, 0, 0
     
     def _process_worksheet_for_sending(self, worksheet, email_sender: EmailSender) -> Tuple[int, int, int, int]:
         """Process a single worksheet for sending emails"""
