@@ -39,16 +39,6 @@ class EmailUtils:
             return url
     
     @staticmethod
-    def convert_text_to_html(text: str) -> str:
-        """Convert text with markdown-style formatting to HTML"""
-        if not text:
-            return ""
-        
-        # Add proper paragraph styling with tighter spacing
-        html_text = f'<div style="font-family: Helvetica Neue, sans-serif; font-size: 14px; line-height: 1.4; color: #333;">{text}</div>'
-        return html_text
-    
-    @staticmethod
     def personalize_email_body(body: str, name: str) -> str:
         """Personalize email body by replacing placeholders"""
         if name and "[Name]" in body:
@@ -106,8 +96,8 @@ class EmailUtils:
         return result
     
     @staticmethod
-    def should_send_email(record: dict) -> tuple[bool, list]:
-        """Check if email should be sent based on record data"""
+    def should_save_email_draft(record: dict) -> tuple[bool, list]:
+        """Check if email should be saved to drafts based on record data"""
         status = str(record.get("Status", "")).strip().lower()
         is_sent = str(record.get("SENT?", "")).strip().lower()
         email = str(record.get("Email", "")).strip()

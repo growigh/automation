@@ -15,7 +15,7 @@ class UserInterface:
         print("\n" + "="*60)
         print("🚀 Email Automation Suite")
         print("="*60)
-        print("1. 📧 Send Emails (from Google Sheets)")
+        print("1. � Save Emails to Drafts (from Google Sheets)")
         print("2. ✍️  Generate Email Bodies (using AI)")
         print("3. 🚪 Exit")
         print("="*60)
@@ -66,8 +66,8 @@ class UserInterface:
             print(f"\n✅ Email generation completed!")
             print(f"\n💡 Next steps:")
             print(f"   1. Review generated emails in your Google Sheet")
-            print(f"   2. Set 'Status' column to 'Approved' for emails you want to send")
-            print(f"   3. Use option 1 to send the generated emails")
+            print(f"   2. Set 'Status' column to 'Approved' for emails you want to save as drafts")
+            print(f"   3. Use option 1 to save the generated emails to drafts")
         else:
             print(f"\n❌ Email generation failed! Please check the errors above.")
     
@@ -88,23 +88,23 @@ class UserInterface:
     
     @staticmethod
     def display_summary(total_rows: int, approved_rows: int, not_approved_rows: int, emails_sent: int):
-        """Display email sending summary"""
+        """Display email draft saving summary"""
         print(f"\n📊 Summary:")
         print(f"   Total rows processed: {total_rows}")
         print(f"   Approved rows: {approved_rows}")
         print(f"   Not approved rows: {not_approved_rows}")
-        print(f"   Emails sent: {emails_sent}")
+        print(f"   Drafts saved: {emails_sent}")
         
         if emails_sent == 0:
             if not_approved_rows > 0 and approved_rows == 0:
-                print(f"⚠️  No emails sent - No approved emails found!")
-                print(f"   Change the 'Status' column to 'Approved' for rows you want to send.")
+                print(f"⚠️  No drafts saved - No approved emails found!")
+                print(f"   Change the 'Status' column to 'Approved' for rows you want to save as drafts.")
             elif approved_rows > 0:
-                print(f"⚠️  No emails sent - All approved emails may be missing required fields or already sent.")
+                print(f"⚠️  No drafts saved - All approved emails may be missing required fields or already processed.")
             else:
-                print(f"⚠️  No emails sent - No data found in sheets.")
+                print(f"⚠️  No drafts saved - No data found in sheets.")
         else:
-            print(f"🎉 Successfully sent {emails_sent} emails!")
+            print(f"🎉 Successfully saved {emails_sent} drafts!")
     
     @staticmethod
     def display_processing_sheet_info(sheet_num: int, total_sheets: int, sheet_id: str):

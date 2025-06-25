@@ -13,7 +13,7 @@ warnings.filterwarnings('ignore', message='urllib3 v2 only supports OpenSSL 1.1.
 from src.core.config import Config
 from src.utils.email_utils import EmailUtils
 from src.services.sheets_manager import SheetsManager
-from src.services.email_sender import EmailSender
+from src.services.email_draft_manager import EmailDraftManager
 from src.services.email_generator import EmailGenerator
 from src.ui.user_interface import UserInterface
 
@@ -26,27 +26,27 @@ class EmailAutomation:
         self.email_generator = EmailGenerator()
         self.ui = UserInterface()
         
-    def send_emails(self) -> None:
-        """Send emails from Google Sheets"""
+    def save_emails_to_drafts(self) -> None:
+        """Save emails to drafts folder from Google Sheets"""
         if not self.sheets_manager.is_connected():
             print("❌ Google Sheets not connected")
             return
         
         # Get email configuration
         email_config = Config.get_email_config()
-        email_sender = EmailSender(email_config)
+        email_draft_manager = EmailDraftManager(email_config)
         
-        if not email_sender.validate_config():
+        if not email_draft_manager.validate_config():
             return
         
-        email_sender.print_config_info()
+        email_draft_manager.print_config_info()
         
         # Get Google Sheets URLs from environment
         env_urls = Config.get_sheets_urls()
         
         if env_urls:
             print(f"📊 Using {len(env_urls)} sheet(s) from .env file")
-            self._process_multiple_sheets_for_sending(env_urls, email_sender)
+            self._process_multiple_sheets_for_drafts(env_urls, email_draft_manager)
             return
         
         # Manual input if no .env URLs
@@ -67,7 +67,7 @@ class EmailAutomation:
         )
         sheet_name = sheet_name if sheet_name else None
         
-        print(f"\n🔄 Starting email sending process...")
+        print(f"\n🔄 Starting email draft saving process...")
         print(f"📊 Sheet ID: {sheet_id}")
         if sheet_name:
             print(f"📋 Target sheet: {sheet_name}")
@@ -75,10 +75,10 @@ class EmailAutomation:
             print("📋 Processing all sheets")
         
         # Process the sheet
-        self._process_single_sheet_for_sending(sheet_id, sheet_name, email_sender)
+        self._process_single_sheet_for_drafts(sheet_id, sheet_name, email_draft_manager)
     
-    def _process_multiple_sheets_for_sending(self, urls: List[str], email_sender: EmailSender) -> None:
-        """Process multiple sheets for email sending"""
+    def _process_multiple_sheets_for_drafts(self, urls: List[str], email_draft_manager: EmailDraftManager) -> None:
+        """Process multiple sheets for saving email drafts"""
         # Initialize counters
         total_emails_sent = 0
         total_total_rows = 0
@@ -95,9 +95,9 @@ class EmailAutomation:
             )
             sheet_name = sheet_name if sheet_name else None
             
-            print(f"🔄 Starting email sending process for sheet {i}...")
-            success, emails_sent, total_rows, approved_rows, not_approved_rows = self._process_single_sheet_for_sending(
-                sheet_id, sheet_name, email_sender
+            print(f"🔄 Starting email draft saving process for sheet {i}...")
+            success, emails_sent, total_rows, approved_rows, not_approved_rows = self._process_single_sheet_for_drafts(
+                sheet_id, sheet_name, email_draft_manager
             )
             
             total_emails_sent += emails_sent
@@ -112,8 +112,8 @@ class EmailAutomation:
         # Display final summary
         self.ui.display_summary(total_total_rows, total_approved_rows, total_not_approved_rows, total_emails_sent)
     
-    def _process_single_sheet_for_sending(self, sheet_id: str, sheet_name: str = None, email_sender: EmailSender = None) -> tuple:
-        """Process a single Google Sheet for email sending"""
+    def _process_single_sheet_for_drafts(self, sheet_id: str, sheet_name: str = None, email_draft_manager: EmailDraftManager = None) -> tuple:
+        """Process a single Google Sheet for saving email drafts"""
         try:
             # Open the spreadsheet
             spreadsheet = self.sheets_manager.get_spreadsheet_by_id(sheet_id)
@@ -144,8 +144,8 @@ class EmailAutomation:
                     print("   2. Grant edit permissions to your service account")
                     continue
                 
-                processed, sent, approved, not_approved = self._process_worksheet_for_sending(
-                    worksheet, email_sender
+                processed, sent, approved, not_approved = self._process_worksheet_for_drafts(
+                    worksheet, email_draft_manager
                 )
                 
                 total_rows += processed
@@ -162,8 +162,8 @@ class EmailAutomation:
             print(f"Make sure the Google Sheets ID is correct and you have proper access permissions")
             return False, 0, 0, 0, 0
     
-    def _process_worksheet_for_sending(self, worksheet, email_sender: EmailSender) -> Tuple[int, int, int, int]:
-        """Process a single worksheet for sending emails"""
+    def _process_worksheet_for_drafts(self, worksheet, email_draft_manager: EmailDraftManager) -> Tuple[int, int, int, int]:
+        """Process a single worksheet for saving email drafts"""
         records = self.sheets_manager.get_worksheet_records(worksheet)
         headers = worksheet.row_values(1)
         
@@ -188,28 +188,28 @@ class EmailAutomation:
             else:
                 not_approved_rows += 1
             
-            # Check if should send email
-            should_send, missing_reasons = EmailUtils.should_send_email(record)
+            # Check if should save email draft
+            should_save, missing_reasons = EmailUtils.should_save_email_draft(record)
             
-            if should_send:
-                print(f"📧 Sending email to: {email}")
+            if should_save:
+                print(f"📧 Creating draft for: {email}")
                 
-                # Send the email
-                success = email_sender.send_email(email, subject, body, name)
+                # Save email to drafts
+                success = email_draft_manager.save_email_to_drafts(email, subject, body, name)
                 
                 if success:
                     emails_sent += 1
-                    # Mark as sent in the worksheet
+                    # Mark as processed in the worksheet
                     mark_success = self.sheets_manager.mark_as_sent(worksheet, i, headers)
                     
                     if not mark_success:
-                        print("❌ STOPPING EXECUTION: Cannot mark emails as sent due to permission issues")
-                        print("   This prevents proper tracking and could lead to duplicate emails")
+                        print("❌ STOPPING EXECUTION: Cannot mark emails as processed due to permission issues")
+                        print("   This prevents proper tracking and could lead to duplicate processing")
                         print("   Please fix sheet permissions before continuing")
                         return total_rows, emails_sent, approved_rows, not_approved_rows
                     
                     # Add rate limiting
-                    email_sender.add_rate_limiting()
+                    email_draft_manager.add_rate_limiting()
                     
             elif status == Config.APPROVED_STATUS and missing_reasons:
                 print(f"⏭️  Skipping row {i}: {', '.join(missing_reasons)}")
@@ -603,8 +603,8 @@ class EmailAutomation:
             choice = self.ui.get_menu_choice()
             
             if choice == "1":
-                print("\n📧 Starting Email Sending Process...")
-                self.send_emails()
+                print("\n� Starting Email Draft Saving Process...")
+                self.save_emails_to_drafts()
                 
             elif choice == "2":
                 print("\n✍️  Starting Email Body Generation Process...")

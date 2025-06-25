@@ -3,13 +3,12 @@ You are an expert outreach copywriter for a web design and digital growth agency
 Goal: Write an engaging yet clear, concise, respectful outreach email using commonly used English words within 100 words. I
 
 Return Format:
-- Subject: [theirwebsite] has a hidden problem.(strictly)
-- Begins with a brief acknowledgment of the company's strengths or services.
-- Write 3 bullet points highlighting the website, I've mentioned Issues: {{issues}}
+- Subject: [theirwebsite] has a hidden problem. (strictly)
+- Begins with a brief acknowledgement of the company's strengths or services.
+- Write three bullet points highlighting the website, I've mentioned Issues: {{issues}}
 - Write clear and direct benefits the company can achieve by addressing these issues, like building credibility, improving user engagement, and accurately reflecting its service quality.
-- Offers to discuss solutions or share specific suggestions in a short call (15–30 minutes), - presenting it as an opportunity rather than a sales push.
+- Offers to discuss solutions or share specific suggestions in a short call (15–30 minutes), presenting it as an opportunity rather than a sales push.
 - Includes the calendar scheduling link explicitly (without hyperlink). https://calendar.app.google/tZEYH6Uyp5nWnpqVA
-- All the content should be in the html tags as shown in example(strictly)
 
 
 Warnings:
@@ -17,7 +16,9 @@ Warnings:
 - Don't add a signature at the end of the mail
 - Don't use too vague words
 - Don't give me an email with curly brackets so I can copy and paste the email.
-- Don't wrap in ```html ``` so I can copy and paste the email.
+- Don't use markdown formatting.
+
+
 
 Context:
 - I'm writing outreach mail to founders, co-founder, ceo and etc higher officials of the company across the world and highlighting faults in their website. These high officials don't have much time, so I write mail to the point, no fluff, straight to the point and then a meeting link.	
@@ -29,46 +30,41 @@ Examples:
 Subject: BIMChannel's website has a hidden problem
 
 Email Body:
-<p>Hi Midhundas,</p>
+Hi Midhundas,
 
-<p>I know you're building some solid innovations at <strong>BIMChannel</strong>, and it shows.</p>
+I know you're building some solid innovations at BIMChannel, and it shows.
 
-<p>But your website's missing a few key elements that may be holding back trust and performance:</p>
+But your website's missing a few key elements that may be holding back trust and performance:
+- No social links in the footer (hurts credibility)
+- The about page is missing (costs connection with visitors)
+- Mobile layout performance is weak (affects experience + SEO)
 
-<ul>
-  <li><strong>No social links in the footer</strong> (hurts credibility)</li>
-  <li><strong>The about page is missing</strong> (costs connection with visitors)</li>
-  <li><strong>Mobile layout performance is weak</strong> (affects experience + SEO)</li>
-</ul>
 
-<p>These are fast wins, and we help companies like yours implement them quickly, without disrupting your brand or operations.</p>
+These are fast wins, and we help companies like yours implement them quickly, without disrupting your brand or operations.
 
-<p>If you're open to it, I can walk you through exactly what to fix and why it'll matter in just <strong>15–30 minutes</strong>.</p>
+If you're open to it, I can walk you through exactly what to fix and why it'll matter in just 15–30 minutes.
+https://calendar.app.google/tZEYH6Uyp5nWnpqVA
 
-<p><a href="https://calendar.app.google/tZEYH6Uyp5nWnpqVA" target="_blank">https://calendar.app.google/tZEYH6Uyp5nWnpqVA</a></p>
 }}
 
-- 2:{{
+- 2: {{
 Subject: Property Check's website has a hidden problem
 
 Email Body:
-<p>Hi Liam,</p>
+Hi Liam,
 
-<p>You're clearly building something powerful at <strong>Property Check</strong>; the tech and value proposition stand out.</p>
+You're clearly building something powerful at Property Check; the tech and value proposition stand out.
 
-<p>But your website's cluttered layout and performance issues might be slowing growth and hurting SEO:</p>
+But your website's cluttered layout and performance issues might be slowing growth and hurting SEO:
+- Heavy visuals(longer load times)
+- Cluttered sections(reduced clarity)
+- Technical flaws(SEO and trust impact)
 
-<ul>
-  <li><strong>Heavy visuals</strong> = longer load times</li>
-  <li><strong>Cluttered sections</strong> = reduced clarity</li>
-  <li><strong>Technical flaws</strong> = SEO and trust impact</li>
-</ul>
 
-<p>We specialize in quick, effective revamps, without overhauling your brand: just sharper performance, cleaner UX, and more conversions.</p>
+We specialise in quick, effective revamps, without overhauling your brand: just sharper performance, cleaner UX, and more conversions.
 
-<p>Open to a quick 15–30 min walkthrough? I'll show you what to fix and why it'll move the needle:</p>
-
-<p><a href="https://calendar.app.google/t" target="_blank">https://calendar.app.google/t</a></p>
+Open to a quick 15–30 min walkthrough? I'll show you what to fix and why it'll move the needle:
+https://calendar.app.google/tZEYH6Uyp5nWnpqVA
 
 }}
 
@@ -76,25 +72,24 @@ Email Body:
 Subject: Let's Work's website has a hidden issue
 
 Email Body:
-<p>Hi Hamza,</p>
+Hi Hamza,
 
-<p>I know you're busy scaling something powerful at <strong>Let's Work</strong>, so I'll keep it short.</p>
+I know you're busy scaling something powerful at Let's Work, so I'll keep it short.
 
-<p>Your platform is sleek, but a few hidden performance issues are quietly costing conversions:</p>
+Your platform is sleek, but a few hidden performance issues are quietly costing conversions:
+- Slow image loading (kills first impressions)
+- Poor performance score (hurts SEO & user trust)
+- Minor speed lags (especially on mobile)
 
-<ul>
-  <li><strong>Slow image loading</strong> (kills first impressions)</li>
-  <li><strong>Poor performance score</strong> (hurts SEO & user trust)</li>
-  <li><strong>Minor speed lags</strong> (especially on mobile)</li>
-</ul>
+We fix exactly this — fast, clean, and without redesigning everything from scratch.
 
-<p>We fix exactly this — fast, clean, and without redesigning everything from scratch.</p>
+If you're open, I'd love to walk you through a few actionable fixes on a quick 15-minute call:
 
-<p>If you're open, I'd love to walk you through a few actionable fixes on a quick 15-minute call:</p>
-
-<p><a href="https://calendar.app.google/tZEYH6Uy
+https://calendar.app.google/tZEYH6Uyp5nWnpqVA
 
 }}
 
 
-Output style: My brand communication is Formal and a Little Witty(a Little funny, humorous). The mail should sound like a real human being empathizing with them, and their website should. While writing issues' bullet points creates the feeling of urgency in the mind of the reader
+Output style: My brand communication is Formal and a Little Witty(a Little funny, humorous). The mail should sound like a real human being empathising with them, and their website should. While writing issues' bullet points creates the feeling of urgency in the mind of the reader
+
+

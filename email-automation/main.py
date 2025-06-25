@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Email Automation Script - Send emails and generate email bodies
+Email Automation Script - save emails to draft and generate email bodies
 """
 
 import os
