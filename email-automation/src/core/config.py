@@ -66,18 +66,13 @@ class Config:
     def get_email_signature() -> tuple[str, str]:
         """Get email signature for text and HTML"""
         text_signature = """
+
 Best Regards,
 Nikhil Nigam
 IIT Kanpur
 Growigh.com"""
         
-        html_signature = """<br>
-Best Regards,<br>
-Nikhil Nigam<br>
-IIT Kanpur<br>
-<a href="https://Growigh.com">Growigh.com</a>"""
-        
-        return text_signature, html_signature
+        return text_signature
     
     @staticmethod
     def get_sheets_urls() -> List[str]:
