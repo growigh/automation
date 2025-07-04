@@ -53,7 +53,7 @@ Subject: Property Check's website has a hidden problem
 Email Body:
 Hi Liam,
 
-You're clearly building something powerful at Property Check; the tech and value proposition stand out.
+I know you are working on something powerful at Property Check; the tech and value proposition stand out.
 
 But your website's cluttered layout and performance issues might be slowing growth and hurting SEO:
 - Heavy visuals(longer load times)

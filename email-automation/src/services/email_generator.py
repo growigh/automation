@@ -108,14 +108,18 @@ class EmailGenerator:
     
     def validate_essential_data(self, data: Dict[str, str]) -> bool:
         """Validate if essential data is present"""
-        return bool(data['name'] and data['company'] and data['website'])
+        # Only require company and website - name is optional (will use "Hi," if missing)
+        return bool(data['company'] and data['website'])
     
     def create_user_prompt(self, data: Dict[str, str]) -> str:
         """Create user prompt with extracted data"""
+        # Use "Hi," if name is not present, otherwise use the name
+        greeting_name = data['name'] if data['name'].strip() else "Hi,"
+        
         return f"""
 Generate an outreach email with the following details:
 
-Recipient Name: {data['name']}
+Recipient Name: {greeting_name}
 Title: {data['title']}
 Company: {data['company']}
 Website: {data['website']}
@@ -124,6 +128,7 @@ Issues: {data['issues']}
 Keywords/Services: {data['keywords']}
 
 Follow the template format and guidelines provided in the system prompt.
+IMPORTANT: If Recipient Name is "Hi,", start the email body with "Hi," instead of trying to personalize with a specific name. Use "Hi," as the greeting in the email body itself.
 """
     
     def generate_email_content(self, row_data: Dict) -> str:

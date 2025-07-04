@@ -46,14 +46,69 @@ class SheetsManager:
     
     def get_worksheet_records(self, worksheet) -> List[Dict]:
         """Get all records from a worksheet"""
-        return worksheet.get_all_records()
+        try:
+            return worksheet.get_all_records()
+        except ValueError as e:
+            if "not uniques" in str(e).lower():
+                print(f"⚠️  Warning: Duplicate column headers detected in worksheet '{worksheet.title}'")
+                print("   Attempting to handle duplicate headers...")
+                
+                # Get all values and manually create records
+                all_values = worksheet.get_all_values()
+                if not all_values:
+                    return []
+                
+                headers = all_values[0]
+                data_rows = all_values[1:]
+                
+                # Handle duplicate headers by adding suffixes
+                seen_headers = {}
+                unique_headers = []
+                for header in headers:
+                    if header in seen_headers:
+                        seen_headers[header] += 1
+                        unique_headers.append(f"{header}_{seen_headers[header]}")
+                    else:
+                        seen_headers[header] = 0
+                        unique_headers.append(header)
+                
+                # Create records with unique headers
+                records = []
+                for row in data_rows:
+                    record = {}
+                    for i, value in enumerate(row):
+                        if i < len(unique_headers):
+                            record[unique_headers[i]] = value
+                        else:
+                            record[f"column_{i+1}"] = value
+                    records.append(record)
+                
+                print(f"   ✅ Successfully processed {len(records)} rows with unique headers")
+                return records
+            else:
+                raise e
     
     def get_column_mapping(self, worksheet) -> Dict[str, int]:
         """Get column name to index mapping"""
         header_row = worksheet.row_values(1)
         column_map = {}
+        seen_headers = {}
+        
         for i, header in enumerate(header_row, start=1):
-            column_map[header] = i
+            # Handle duplicate headers by adding suffixes
+            if header in seen_headers:
+                seen_headers[header] += 1
+                unique_header = f"{header}_{seen_headers[header]}"
+            else:
+                seen_headers[header] = 0
+                unique_header = header
+            
+            column_map[unique_header] = i
+            
+            # Also keep the original header mapping for the first occurrence
+            if seen_headers[header] == 0:
+                column_map[header] = i
+        
         return column_map
     
     def validate_required_columns(self, column_map: Dict[str, int], required_columns: List[str]) -> Tuple[bool, List[str]]:
